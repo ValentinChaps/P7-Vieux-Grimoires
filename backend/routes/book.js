@@ -1,20 +1,34 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth')
+const multer = require('../middleware/multer-config')
+// const bookCtrl = require('../controllers/book');
+
+// router.post('/', bookCtrl.createThing);
+// router.get('/', bookCtrl.getAllStuff);
+// router.get('/:id', bookCtrl.getOneThing);
+// router.put('/:id', bookCtrl.modifyThing);
+// router.delete('/:id', bookCtrl.deleteThing);
+
 
 const Book = require('../models/Book');
 
-router.post('/', (req, res, next) => {
+router.post('/', auth, multer, (req, res, next) => {
+  const bookObject = JSON.parse(req.body.book);
+  delete bookObject._id;
+  delete bookObject._userId;
   const book = new Book({
-    userId: req.body.userId,
+    ...bookObject,
+    userId: req.auth.userId,
     title: req.body.title,
     author: req.body.author,
-    imageUrl: req.body.imageUrl,
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
     year: req.body.year,
     genre: req.body.genre,
     rating: req.body.grade,
-    averageRating: req.body.averageRating
   });
-  book.save().then(
+  book.save()
+  .then(
     () => {
       res.status(201).json({
         message: 'Post saved successfully!'
