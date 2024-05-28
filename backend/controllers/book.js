@@ -62,19 +62,32 @@ exports.modifyBook = (req, res, next) => {
 };
 
 exports.deleteBook = (req, res, next) => {
-  Book.deleteOne({_id: req.params.id}).then(
-    () => {
-      res.status(200).json({
-        message: 'Livre effacé avec succès !'
-      });
-    }
+  Book.findOne({_id: req.params.id})
+      .then((book) => {
+          if (book.userId != req.auth.userId) {
+              res.status(403).json({ message : '403: unauthorized request' });
+          } else {
+              const filename = book.imageUrl.split('/images/')[1];
+              fs.unlink(`images/${filename}`, (err => {
+                      if (err) console.log(err);
+                  })
+              )
+              Book.deleteOne({_id: req.params.id}).then(
+                () => {
+                  res.status(200).json({
+                    message: 'Livre effacé avec succès !'
+                  });
+                })
+              }
+            }
   ).catch(
     (error) => {
       res.status(400).json({
         error: error
+        // message: `delete ${error}`
       });
     }
-  );
+  )
 };
 
 exports.getAllBooks = (req, res, next) => {
@@ -94,11 +107,15 @@ exports.getAllBooks = (req, res, next) => {
 exports.rateBook = (req, res, next) => {
   Book.findOne({ _id: req.params.id })
       .then(book => {
-          book.ratings.map(rate => {
-              if (req.auth.userId === rate.userId) {
-                  res.status(400).json({ message: "Vous avez déjà noté ce livre" })
-                }
-          })
+        let alreadyRated = book.ratings.find(rating => rating.userId == req.token.userId);
+        if (alreadyRated) {
+          res.status(400).json({ message: "Vous avez déjà noté ce livre" })
+        }
+          // book.ratings.map(rate => {
+          //     if (req.auth.userId === rate.userId) {
+          //         res.status(400).json({ message: "Vous avez déjà noté ce livre" })
+          //       }
+          // })
           book.ratings.push({
               "userId": req.auth.userId,
               "grade": req.body.rating

@@ -1,15 +1,22 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const helmet = require('helmet');
 const userRoutes = require('./routes/user');
 const bookRoutes = require('./routes/book');
 
 
-mongoose.connect(`mongodb+srv://${process.env.LOGIN}:${process.env.PASSWORD}@cluster0.qw9ihu1.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0'`)
+mongoose.connect(`mongodb+srv://${process.env.LOGIN}:${process.env.PASSWORD}@${process.env.CLUSTER}.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority&appName=Cluster0'`)
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
   
 const app = express();
+
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
