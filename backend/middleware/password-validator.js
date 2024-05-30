@@ -2,6 +2,7 @@ const passwordValidator = require("password-validator");
 
 const schema = new passwordValidator();
 
+//Demande de créer un mot de passe avec certaines conditions
 schema
   .is().min(5) // Minimum length 8
   .is().max(100) // Maximum length 100

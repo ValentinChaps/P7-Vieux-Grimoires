@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path')
 const acceptedFormat = ['jpeg' , 'jpg', 'png' , 'webp' , 'avif']
 
+//Permet d'optimiser le fichier image uploader
 module.exports = async (req, res, next) => {
     try{
         if (req.file) {
@@ -10,9 +11,11 @@ module.exports = async (req, res, next) => {
             const fileDatas = path.parse(originalname);
             const link = fileDatas.name.split(' ').join('_') + Date.now() + '.webp';
             const metadata = await sharp(buffer).metadata()
+            //On vérifie si le format du fichier est accepté
             if (!acceptedFormat.includes(metadata.format)) {
                 res.status(500).json({message : "Ce type de fichier n'est pas accepté."})
             }
+            //Modification de la taille de l'image, de son format et on définit l'endroit ou elle sera stocké
             fs.mkdir('./images', (err) => {
                 sharp(buffer)
                     .resize({ width: 206, height: 260, fit:'cover', withoutEnlargement: false })
@@ -31,35 +34,3 @@ module.exports = async (req, res, next) => {
         res.status(500).json({error})
     }
 };
-
-
-// const sharp = require('sharp');
-// const acceptedFormat = ['jpeg' , 'jpg', 'png' , 'webp' , 'avif']
-
-// module.exports = async (req, res, next) => {
-//     try{
-//         if (!req.file) {
-//         return next();
-//         }
-//         console.log(req.file)
-//         const metadata = await sharp(req.file.buffer).metadata();
-        // if (!acceptedFormat.includes(metadata.format)) {
-        //     res.status(500).json({message : "Ce type de fichier n'est pas accepté."})
-        // }
-//         const fileName = req.file.originalName.split('.')[0];
-//         const uniqueFileName = fileName + Date.now() + '.webp';
-//         const pathImage = '/images' + uniqueFileName
-//         req.file.fileName = uniqueFileName
-        
-//     await sharp(req.file.buffer)
-//         .resize({ width: 206, height: 260, fit:'cover', withoutEnlargement: false })
-//         .toFormat('webp')
-//         .toFile(pathImage);
-
-//         next()
-        
-//   }
-//   catch(error){
-//     res.status(500).json({error})
-//   }
-// }
