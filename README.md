@@ -4,4 +4,6 @@ Le site a été réalisé avec React pour la partie frontend et MongoDB, Express
 
 Si vous souhaitez vous servir du projet avec votre propre base de données, il vous suffit de créer un fichier ".env". Vous trouverez un exemple d'à quoi doit ressembler ce fichier dans ".env.template".
 
-Ensuite il vous faudra taper la commande "npm install" pour installer toutes les bibliothèques nécessaire. Puis vous pourrez mettre "npm start" dans la console pour démarrer le serveur. 
+Ensuite il vous faudra taper la commande "npm install" pour installer toutes les bibliothèques nécessaire. Puis vous pourrez mettre "npm start" dans la console pour démarrer le serveur.
+
+Vous pouvez aussi créer un compte pour ajouter des livres, mais votre mot de passe doit contenir une majuscule, une minuscule, un chiffre et au moins 8 caractères. 
