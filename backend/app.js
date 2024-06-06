@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const userRoutes = require('./routes/user');
 const bookRoutes = require('./routes/book');
 
+//Permet de se connecter au serveur MongoDB
 mongoose.connect(`mongodb+srv://${process.env.LOGIN}:${process.env.PASSWORD}@${process.env.CLUSTER}.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority&appName=Cluster0'`)
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
